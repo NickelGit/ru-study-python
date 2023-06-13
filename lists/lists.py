@@ -5,7 +5,7 @@ class ListExercise:
             return []
 
         result = []
-        max_number = max(input_list)
+        max_number = ListExercise.max(input_list)
         for num in input_list:
             result.append(num) if num < 0 else result.append(max_number)
 
