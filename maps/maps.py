@@ -4,28 +4,39 @@ from typing import Union
 class MapExercise:
     @staticmethod
     def rating(list_of_movies: list[dict]) -> float:
-        """
-        !!Задание нужно решить используя map!!
-        Посчитать средний рейтинг фильмов (rating_kinopoisk) у которых две или больше стран.
-        Фильмы у которых рейтинг не задан или равен 0 не учитывать в расчете среднего.
+        ratings = map(
+            lambda film: float(film["rating_kinopoisk"])
+            if MapExercise.has_several_countries_and_positive_kinopoisk_rating(film)
+            else None,
+            list_of_movies,
+        )
+        filtered_ratings = [rating for rating in ratings if rating is not None]
 
-        :param list_of_movies: Список фильмов.
-        Ключи словаря: name, rating_kinopoisk, rating_imdb, genres, year, access_level, country
-        :return: Средний рейтинг фильмов у которых две или больше стран
-        """
-        pass
+        return sum(filtered_ratings) / len(filtered_ratings)
 
     @staticmethod
     def chars_count(list_of_movies: list[dict], rating: Union[float, int]) -> int:
-        """
-        !!Задание нужно решить используя map!!
-        Посчитать количество букв 'и' в названиях всех фильмов с рейтингом (rating_kinopoisk) больше
-        или равным заданному значению
+        chars_number_in_names = map(
+            lambda film: film["name"].count("и")
+            if MapExercise.has_rating_gteq(film, rating)
+            else 0,
+            list_of_movies,
+        )
 
-        :param list_of_movies: Список фильмов
-        Ключи словаря: name, rating_kinopoisk, rating_imdb, genres, year, access_level, country
-        :param rating: Заданный рейтинг
-        :return: Количество букв 'и' в названиях всех фильмов с рейтингом больше
-        или равным заданному значению
-        """
-        pass
+        return sum(chars_number_in_names)
+
+    @staticmethod
+    def has_several_countries(film: dict) -> bool:
+        return "," in film["country"]
+
+    @staticmethod
+    def has_several_countries_and_positive_kinopoisk_rating(film: dict) -> bool:
+        return (
+            MapExercise.has_several_countries(film)
+            and film["rating_kinopoisk"]
+            and float(film["rating_kinopoisk"]) > 0
+        )
+
+    @staticmethod
+    def has_rating_gteq(film: dict, threshold: Union[float, int]) -> bool:
+        return film["rating_kinopoisk"] and float(film["rating_kinopoisk"]) >= threshold
