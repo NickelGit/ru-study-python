@@ -7,8 +7,8 @@ class FilterMapExercise:
         result = []
 
         for item in input_array:
-            processing_result = func(item)
-            if processing_result[0]:
-                result.append(processing_result[1])
+            flag, value = func(item)
+            if flag:
+                result.append(value)
 
         return result
