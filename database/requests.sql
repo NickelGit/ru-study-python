@@ -4,7 +4,7 @@
 \! echo ===================================================================
 
 SELECT * FROM employees
-WHERE email NOT LIKE '%dualbootpartners.com'
+WHERE email NOT LIKE '%@dualbootpartners.com'
 OR email IS NULL;
 
 \! echo ===================================================================
@@ -34,14 +34,18 @@ GROUP BY department_id;
 \! echo "авторский комментарий: первый вариант человекочитаемый, второй без лишних джойнов"
 \! echo ===================================================================
 
-SELECT d.name, COUNT(department_id)
+SELECT region.name, COUNT(region_id)
 FROM employees
-JOIN departments d ON d.id = employees.department_id
-GROUP BY d.name;
+JOIN departments department ON department.id = employees.department_id
+JOIN locations location ON location.id = department.location_id
+JOIN regions region ON region.id = location.region_id
+GROUP BY region.name;
 
-SELECT department_id, COUNT(department_id)
+SELECT region_id, COUNT(region_id)
 FROM employees
-GROUP BY department_id;
+JOIN departments department ON department.id = employees.department_id
+JOIN locations location ON location.id = department.location_id
+GROUP BY region_id;
 
 \! echo ===================================================================
 \! echo "Показать сотрудников у которых фамилия длиннее 10 символов"
