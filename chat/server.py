@@ -1,5 +1,6 @@
 import socket
 import logging
+import queue
 from settings import (
     HOST,
     PORT,
@@ -14,7 +15,7 @@ from datetime import datetime
 
 connected_users: dict = {}
 messages_log: list = []
-sending_queue: list = []
+sending_queue: queue.Queue = queue.Queue()
 
 
 def format_message(user_name: str, text: str) -> str:
@@ -24,13 +25,13 @@ def format_message(user_name: str, text: str) -> str:
 
 def add_message_to_log(message: str) -> None:
     if len(messages_log) > MESSAGE_LOG_MAX_LEN:
-        messages_log.pop(0)
+        del messages_log[0]
 
     messages_log.append(message)
 
 
 def add_to_sending_queque(message: str, author_name: str) -> None:
-    sending_queue.append({"text": message, "author": author_name})
+    sending_queue.put({"text": message, "author": author_name})
 
 
 def send_greeting_message(user_name: str) -> None:
@@ -60,9 +61,8 @@ def send_message_to_active_clients(message: tuple) -> None:
 def send_messages_from_queue() -> None:
     while True:
         if sending_queue:
-            message = sending_queue[0]
+            message = sending_queue.get()
             send_message_to_active_clients(message)
-            sending_queue.pop(0)
 
 
 def messages_log_multistring() -> str:
